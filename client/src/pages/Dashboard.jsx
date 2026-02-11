@@ -53,7 +53,7 @@ export default function Dashboard() {
       return;
     }
 
-    const socket = io("http://localhost:5000", { auth: { token } });
+    const socket = io(import.meta.env.VITE_API_URL,  { auth: { token } });
 
     socket.on("connect", () => console.log("Connected to socket server"));
 
@@ -72,7 +72,7 @@ export default function Dashboard() {
   const fetchStudents = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/students",
+        "import.meta.env.VITE_API_URL/api/students",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setStudents(res.data);
@@ -85,7 +85,7 @@ export default function Dashboard() {
   const fetchAnalytics = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/students/analytics/summary",
+        "import.meta.env.VITE_API_URL/api/students/analytics/summary",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setStats({
