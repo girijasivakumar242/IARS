@@ -8,14 +8,20 @@ const connectDB = require("./config/db");
 connectDB();
 
 const app = express();
-app.use(cors());
+
+app.use(cors({
+  origin: "https://iars-op7rnsewu-girija-ss-projects.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
 app.use(express.json());
 
 /* ================= SOCKET SETUP ================= */
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // your frontend port
+    origin: "https://iars-op7rnsewu-girija-ss-projects.vercel.app",
     methods: ["GET", "POST"],
   },
 });
