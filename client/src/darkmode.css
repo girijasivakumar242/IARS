@@ -1,0 +1,298 @@
+/* =========================
+   DARK MODE DESIGN TOKENS
+   ========================= */
+body.dark {
+  /* Core colors */
+  --bg-color: #0f172a;           /* page background */
+  --surface-color: #111827;      /* navbar / panels */
+  --card-bg: #1f2937;
+  --border-color: #374151;
+
+  /* Text */
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+
+  /* Brand */
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+  --danger-color: #ef4444;
+
+  /* Inputs */
+  --input-bg: #020617;
+  --input-border: #334155;
+  --input-focus: #4f46e5;
+
+  /* Shadows */
+  --shadow-soft: 0 8px 24px rgba(0,0,0,0.35);
+  --shadow-strong: 0 20px 40px rgba(0,0,0,0.5);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
+/* =========================
+   GLOBAL
+   ========================= */
+body.dark {
+  background: var(--bg-color);
+  color: var(--text-primary);
+}
+
+body.dark ::selection {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+/* =========================
+   NAVBAR
+   ========================= */
+body.dark .navbar {
+  background: var(--surface-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+body.dark .logo {
+  color: var(--text-primary);
+}
+
+body.dark .nav-links a,
+body.dark .nav-links span {
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+body.dark .nav-links a:hover,
+body.dark .nav-links .active {
+  color: var(--primary-color);
+}
+
+/* =========================
+   CARDS / PANELS
+   ========================= */
+body.dark .card,
+body.dark .activity,
+body.dark .students-table,
+body.dark .auth-card,
+body.dark .mock-card,
+body.dark .feature {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-soft);
+  color: var(--text-primary);
+}
+
+body.dark .card h3,
+body.dark .activity h3 {
+  color: var(--text-primary);
+}
+
+body.dark .card p,
+body.dark .subtitle,
+body.dark .auth-card p {
+  color: var(--text-secondary);
+}
+
+/* =========================
+   TABLES
+   ========================= */
+body.dark table {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border-collapse: collapse;
+}
+
+body.dark th {
+  background: #020617;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+body.dark td {
+  border-bottom: 1px solid var(--border-color);
+}
+
+body.dark tr:hover td {
+  background: rgba(79, 70, 229, 0.08);
+}
+
+/* =========================
+   FORMS & INPUTS
+   ========================= */
+body.dark input,
+body.dark select,
+body.dark textarea {
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--input-border);
+  transition: border var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+body.dark input::placeholder {
+  color: var(--text-muted);
+}
+
+body.dark input:focus,
+body.dark select:focus,
+body.dark textarea:focus {
+  outline: none;
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 2px rgba(79,70,229,0.35);
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+body.dark .primary-btn,
+body.dark .auth-card button {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+body.dark .primary-btn:hover,
+body.dark .auth-card button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+body.dark .primary-btn:active {
+  transform: translateY(0);
+}
+
+body.dark .primary-btn:disabled {
+  background: #334155;
+  cursor: not-allowed;
+}
+
+/* =========================
+   AUTH PAGES
+   ========================= */
+body.dark .auth-right {
+  background: var(--bg-color);
+}
+
+/* =========================
+   ALERTS / STATUS (optional)
+   ========================= */
+body.dark .success {
+  color: #22c55e;
+}
+
+body.dark .error {
+  color: var(--danger-color);
+}
+
+/* =========================
+   SCROLLBAR (Chrome / Edge)
+   ========================= */
+body.dark ::-webkit-scrollbar {
+  width: 8px;
+}
+
+body.dark ::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+body.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+body.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* =========================
+   DASHBOARD – DARK MODE
+   ========================= */
+
+/* Page background */
+body.dark .dashboard {
+  background: linear-gradient(180deg, #020617 0%, #020617 100%);
+}
+
+/* Navbar */
+body.dark .navbar-new {
+  background: #020617;
+  border-bottom: 1px solid #1e293b;
+}
+
+body.dark .logo-new {
+  color: #f9fafb;
+}
+
+body.dark .nav-links a {
+  color: #94a3b8;
+}
+
+body.dark .nav-links a:hover,
+body.dark .nav-links .active {
+  color: #6366f1;
+}
+
+/* Cards */
+body.dark .card-new {
+  background: #020617;
+  border: 1px solid #1e293b;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+}
+
+body.dark .card-new h3 {
+  color: #f9fafb;
+}
+
+body.dark .card-new p {
+  color: #94a3b8;
+}
+
+/* Status accents */
+body.dark .card-new.warning {
+  border-top: 4px solid #f59e0b;
+}
+
+body.dark .card-new.success {
+  border-top: 4px solid #22c55e;
+}
+
+/* Activity panel */
+body.dark .activity {
+  background: #020617;
+  border: 1px solid #1e293b;
+}
+
+body.dark .activity h3 {
+  color: #f9fafb;
+}
+
+/* Logout button */
+body.dark .logout-btn {
+  background: #dc2626;
+}
+
+body.dark .logout-btn:hover {
+  background: #b91c1c;
+}
+body.dark .dashboard-content-new h2
+{
+  color: #f9fafb;
+}
+
+body.dark .stat-card h3,
+body.dark .stat-card p {
+  color: #020617;
+}
+body.dark .students-page h2{
+  color: #f9fafb;
+}
+body.dark .form-card h3,
+body.dark .upload-card h3 {
+  color: #020617;
+}
+
+body.dark .modal h3,
+body.dark .modal p{
+  color: #020617;
+}
