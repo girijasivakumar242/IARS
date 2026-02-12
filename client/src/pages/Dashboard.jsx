@@ -72,7 +72,7 @@ export default function Dashboard() {
   const fetchStudents = async () => {
     try {
       const res = await axios.get(
-        "import.meta.env.VITE_API_URL/api/students",
+        `${import.meta.env.VITE_API_URL}/api/students`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setStudents(res.data);
@@ -85,7 +85,7 @@ export default function Dashboard() {
   const fetchAnalytics = async () => {
     try {
       const res = await axios.get(
-        "import.meta.env.VITE_API_URL/api/students/analytics/summary",
+        `${import.meta.env.VITE_API_URL}/api/students/analytics/summary`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setStats({

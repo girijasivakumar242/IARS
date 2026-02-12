@@ -48,7 +48,7 @@ export default function Students() {
 
   /* ================= FETCH ================= */
   const fetchStudents = async () => {
-    const res = await fetch("import.meta.env.VITE_API_URL/api/students", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/students`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
@@ -63,7 +63,7 @@ export default function Students() {
 
     setLoading(true);
 
-    await fetch("import.meta.env.VITE_API_URL/api/students/add", {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/students/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -102,7 +102,7 @@ export default function Students() {
   const updateStudent = async () => {
     setLoading(true);
 
-    await fetch(`import.meta.env.VITE_API_URL/api/students/${editStudent._id}`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/students/${editStudent._id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -126,7 +126,7 @@ export default function Students() {
   };
 
   const deleteStudent = async () => {
-    await fetch(`import.meta.env.VITE_API_URL/api/students/${deleteId}`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/students/${deleteId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -140,7 +140,7 @@ export default function Students() {
     const formData = new FormData();
     formData.append("file", file);
 
-    await fetch("import.meta.env.VITE_API_URL/api/students/upload", {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/students/upload`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
