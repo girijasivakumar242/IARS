@@ -16,7 +16,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-
+app.options("*", cors(corsOptions));
 /* ================= SOCKET SETUP ================= */
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -24,6 +24,7 @@ const io = new Server(server, {
     origin: "https://iars-beta.vercel.app",
     methods: ["GET", "POST"],
   },
+  allowEIO3: true 
 });
 
 app.set("io", io);
