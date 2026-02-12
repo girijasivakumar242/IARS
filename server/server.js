@@ -16,7 +16,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.options("*", cors(corsOptions));
+
 /* ================= SOCKET SETUP ================= */
 const server = http.createServer(app);
 const io = new Server(server, {
