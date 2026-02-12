@@ -35,7 +35,7 @@ exports.addSingleStudent = async (req, res) => {
 
     const scriptPath = path.join(__dirname, "../ml/predict.py");
 
-    const python = spawn("python", [
+    const python = spawn("python3", [
       scriptPath,
       attendance,
       internalMarks,
