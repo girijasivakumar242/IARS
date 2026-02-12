@@ -38,7 +38,7 @@ export default function Students() {
 
   /* ================= SOCKET ================= */
   useEffect(() => {
-    const socket = io("import.meta.env.VITE_API_URL", { auth: { token } });
+    const socket = io(import.meta.env.VITE_API_URL, { auth: { token } });
 
     socket.on("studentUpdated", fetchStudents);
     fetchStudents();
