@@ -1,0 +1,199 @@
+.student-form-container{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#f5f7fb;
+}
+
+.student-form-card{
+  width:400px;
+  background:white;
+  padding:30px;
+  border-radius:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.student-form-card h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.student-form-card form{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.student-form-card input{
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:6px;
+}
+
+.student-form-card button{
+  padding:10px;
+  background:#4f46e5;
+  color:white;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.message{
+  margin-top:10px;
+  text-align:center;
+}
+
+.session-info {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+
+.subject-grade-section {
+  margin-top: 16px;
+}
+
+.subject-grade-section h3 {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.subject-grade-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.subject-grade-row input {
+  flex: 1;
+}
+
+.secondary-btn {
+  padding: 10px 14px;
+  background: #374151;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+.student-form-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f7fb;
+  padding: 30px 15px;
+}
+
+.student-form-card {
+  width: 100%;
+  max-width: 500px;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.wide-card {
+  max-width: 950px;
+}
+
+.student-form-card h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.session-info {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.student-form-card input {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.subject-grade-section {
+  margin-top: 20px;
+}
+
+.subject-grade-section h3 {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.subject-grade-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.subject-grade-row input {
+  flex: 1;
+}
+
+.secondary-btn {
+  padding: 10px 14px;
+  background: #374151;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+
+.secondary-btn:hover {
+  background: #1f2937;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+  background: #4338ca;
+}
+
+.message {
+  margin-top: 14px;
+  text-align: center;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .subject-grade-row {
+    flex-direction: column;
+  }
+}

@@ -53,5 +53,5 @@ final_suggestion = " ".join(suggestions)
 print(json.dumps({
     "riskLevel": risk_level,
     "weakAreas": weak_areas,
-    "suggestion": final_suggestion
+    "suggestions": suggestions
 }))

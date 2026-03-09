@@ -1,226 +1,152 @@
-const Student = require("../models/Student");
+const StudentSubmission = require("../models/StudentSubmission");
+const Session = require("../models/Session");
 const { spawn } = require("child_process");
 const path = require("path");
-const xlsx = require("xlsx");
 
-/* =====================================================
-   HELPER: Run Python Prediction Safely
-===================================================== */
-const runPrediction = (attendance, internalMarks, cgpa) => {
+const runPrediction = ({ cgpa, attendance, internalMarks }) => {
   return new Promise((resolve, reject) => {
-    const scriptPath = path.join(__dirname, "../ml/predict.py");
-
-    // 🔥 IMPORTANT: Render uses python3
-    const python = spawn("python3", [
-      scriptPath,
-      attendance,
-      internalMarks,
-      cgpa,
+    const pythonProcess = spawn("python", [
+      path.join(__dirname, "../ml/predict.py"),
+      attendance,     // correct order for predict.py
+      internalMarks,  // correct order for predict.py
+      cgpa,           // correct order for predict.py
     ]);
 
-    let output = "";
+    let result = "";
     let errorOutput = "";
 
-    python.stdout.on("data", (data) => {
-      output += data.toString();
+    pythonProcess.stdout.on("data", (data) => {
+      result += data.toString();
     });
 
-    python.stderr.on("data", (data) => {
+    pythonProcess.stderr.on("data", (data) => {
       errorOutput += data.toString();
     });
 
-    python.on("close", (code) => {
+    pythonProcess.on("close", (code) => {
       if (code !== 0) {
-        console.error("Python error:", errorOutput);
-        return reject("Prediction failed");
-      }
-
-      if (!output) {
-        return reject("No output from Python");
+        return reject(new Error(errorOutput || "Prediction process failed"));
       }
 
       try {
-        const parsed = JSON.parse(output.trim());
+        const parsed = JSON.parse(result);
         resolve(parsed);
-      } catch (err) {
-        console.error("JSON Parse error:", err);
-        reject("Invalid prediction format");
+      } catch (error) {
+        reject(new Error("Invalid prediction response from Python script"));
       }
     });
   });
 };
 
-/* =====================================================
-   GET ALL STUDENTS
-===================================================== */
-exports.getStudents = async (req, res) => {
+exports.submitStudentForm = async (req, res) => {
   try {
-    const students = await Student.find({ teacher: req.user.id })
-      .sort({ createdAt: -1 });
+    const { sessionCode } = req.params;
 
-    res.status(200).json(students);
-  } catch (err) {
-    res.status(500).json({ message: "Failed to fetch students" });
-  }
-};
-
-/* =====================================================
-   ADD SINGLE STUDENT
-===================================================== */
-exports.addSingleStudent = async (req, res) => {
-  try {
-    const teacherId = req.user.id;
-    const { name, rollNo } = req.body;
-
-    const attendance = Number(req.body.attendance);
-    const internalMarks = Number(req.body.internalMarks);
-    const cgpa = Number(req.body.cgpa);
-
-    if (!name || !rollNo || isNaN(attendance) || isNaN(internalMarks) || isNaN(cgpa)) {
-      return res.status(400).json({ message: "Invalid student data" });
-    }
-
-    const { riskLevel, suggestion } =
-      await runPrediction(attendance, internalMarks, cgpa);
-
-    const student = await Student.create({
-      teacher: teacherId,
-      name,
-      rollNo,
+    const {
+      studentName,
+      regNo,
+      department,
+      year,
+      cgpa,
       attendance,
       internalMarks,
+      subjectGrades,
+    } = req.body;
+
+    if (
+      !studentName ||
+      !regNo ||
+      !department ||
+      !year ||
+      cgpa === undefined ||
+      attendance === undefined ||
+      internalMarks === undefined
+    ) {
+      return res.status(400).json({
+        message: "All required fields must be filled",
+      });
+    }
+
+    const session = await Session.findOne({ sessionCode });
+
+    if (!session) {
+      return res.status(404).json({ message: "Session not found" });
+    }
+
+    if (!session.isActive || new Date() > new Date(session.expiresAt)) {
+      return res.status(400).json({ message: "Session expired" });
+    }
+
+    const prediction = await runPrediction({
       cgpa,
-      riskLevel,
-      suggestion,
+      attendance,
+      internalMarks,
     });
 
-    req.app.get("io").emit("studentUpdated");
+    const student = await StudentSubmission.create({
+      teacherId: session.teacherId,
+      sessionCode,
+      sessionId: session._id,
+      studentName,
+      regNo,
+      department,
+      year,
+      cgpa,
+      attendance,
+      internalMarks,
+      subjectGrades: subjectGrades || [],
+      riskLevel: prediction.riskLevel || "Pending",
+      suggestions: prediction.suggestions || [],
+    });
 
-    res.status(201).json(student);
+    const io = req.app.get("io");
+    io.emit("studentUpdated");
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Prediction failed" });
-  }
-};
-
-/* =====================================================
-   BULK UPLOAD
-===================================================== */
-exports.uploadStudentSheet = async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
-    }
-
-    const workbook = xlsx.readFile(req.file.path);
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const students = xlsx.utils.sheet_to_json(sheet);
-
-    for (const s of students) {
-      const attendance = Number(s.attendance);
-      const internalMarks = Number(s.internalMarks);
-      const cgpa = Number(s.cgpa);
-
-      if (!s.name || !s.rollNo || isNaN(attendance) || isNaN(internalMarks) || isNaN(cgpa))
-        continue;
-
-      try {
-        const { riskLevel, suggestion } =
-          await runPrediction(attendance, internalMarks, cgpa);
-
-        await Student.create({
-          teacher: req.user.id,
-          name: s.name,
-          rollNo: s.rollNo,
-          attendance,
-          internalMarks,
-          cgpa,
-          riskLevel,
-          suggestion,
-        });
-
-      } catch (err) {
-        console.error("Skipping student due to prediction error");
-        continue;
-      }
-    }
-
-    req.app.get("io").emit("studentUpdated");
-
-    res.status(200).json({ message: "Bulk upload successful" });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Bulk upload failed" });
-  }
-};
-
-/* =====================================================
-   DELETE STUDENT
-===================================================== */
-exports.deleteStudent = async (req, res) => {
-  try {
-    await Student.findByIdAndDelete(req.params.id);
-
-    req.app.get("io").emit("studentUpdated");
-
-    res.json({ message: "Deleted successfully" });
-
+    res.status(201).json({
+      success: true,
+      message: "Student details submitted successfully",
+      student,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Delete failed" });
+    console.error("Submit student form error:", error);
+    res.status(500).json({
+      message: error.message || "Server error while submitting form",
+    });
   }
 };
 
-/* =====================================================
-   ANALYTICS SUMMARY
-===================================================== */
+exports.getStudents = async (req, res) => {
+  try {
+    const students = await StudentSubmission.find({
+      teacherId: req.user.id,
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json(students);
+  } catch (error) {
+    console.error("Get students error:", error);
+    res.status(500).json({ message: "Server error while fetching students" });
+  }
+};
+
 exports.getAnalyticsSummary = async (req, res) => {
   try {
-    const students = await Student.find({ teacher: req.user.id });
-
-    res.json({
-      totalStudents: students.length,
-      highRisk: students.filter(s => s.riskLevel === "High").length,
-      mediumRisk: students.filter(s => s.riskLevel === "Medium").length,
-      lowRisk: students.filter(s => s.riskLevel === "Low").length,
+    const students = await StudentSubmission.find({
+      teacherId: req.user.id,
     });
 
+    const totalStudents = students.length;
+    const highRisk = students.filter((s) => s.riskLevel === "High").length;
+    const mediumRisk = students.filter((s) => s.riskLevel === "Medium").length;
+    const lowRisk = students.filter((s) => s.riskLevel === "Low").length;
+
+    res.status(200).json({
+      totalStudents,
+      highRisk,
+      mediumRisk,
+      lowRisk,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Analytics failed" });
-  }
-};
-
-/* =====================================================
-   UPDATE STUDENT + RE-PREDICT
-===================================================== */
-exports.updateStudent = async (req, res) => {
-  try {
-    const attendance = Number(req.body.attendance);
-    const internalMarks = Number(req.body.internalMarks);
-    const cgpa = Number(req.body.cgpa);
-
-    const { riskLevel, suggestion } =
-      await runPrediction(attendance, internalMarks, cgpa);
-
-    const updated = await Student.findByIdAndUpdate(
-      req.params.id,
-      {
-        attendance,
-        internalMarks,
-        cgpa,
-        riskLevel,
-        suggestion,
-      },
-      { new: true }
-    );
-
-    req.app.get("io").emit("studentUpdated");
-
-    res.json(updated);
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Update failed" });
+    console.error("Analytics summary error:", error);
+    res.status(500).json({ message: "Server error while fetching analytics" });
   }
 };

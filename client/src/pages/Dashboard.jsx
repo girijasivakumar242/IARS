@@ -46,14 +46,13 @@ export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const studentsPerPage = 5;
 
-  /* ================= SOCKET SETUP ================= */
   useEffect(() => {
     if (!token) {
       navigate("/login");
       return;
     }
 
-    const socket = io(import.meta.env.VITE_API_URL,  { auth: { token } });
+    const socket = io(import.meta.env.VITE_API_URL, { auth: { token } });
 
     socket.on("connect", () => console.log("Connected to socket server"));
 
@@ -68,7 +67,6 @@ export default function Dashboard() {
     return () => socket.disconnect();
   }, [token]);
 
-  /* ================= FETCH STUDENTS ================= */
   const fetchStudents = async () => {
     try {
       const res = await axios.get(
@@ -77,11 +75,11 @@ export default function Dashboard() {
       );
       setStudents(res.data);
     } catch (err) {
+      console.error("Fetch students error:", err);
       navigate("/login");
     }
   };
 
-  /* ================= FETCH ANALYTICS ================= */
   const fetchAnalytics = async () => {
     try {
       const res = await axios.get(
@@ -95,33 +93,32 @@ export default function Dashboard() {
         low: res.data.lowRisk,
       });
     } catch (err) {
-      console.error("Analytics error");
+      console.error("Analytics error:", err);
     }
   };
 
-  /* ================= FILTERED STUDENTS ================= */
   const filteredStudents = useMemo(() => {
     let filtered = students.filter((student) =>
-      student.name.toLowerCase().includes(search.toLowerCase())
+      ((student.studentName || "").toLowerCase().includes(search.toLowerCase())) ||
+      ((student.regNo || "").toLowerCase().includes(search.toLowerCase()))
     );
+
     if (filterRisk !== "All") {
       filtered = filtered.filter((student) => student.riskLevel === filterRisk);
     }
+
     return filtered;
   }, [students, search, filterRisk]);
 
-  /* ================= PAGINATION ================= */
   const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
   const indexOfLast = currentPage * studentsPerPage;
   const indexOfFirst = indexOfLast - studentsPerPage;
   const currentStudents = filteredStudents.slice(indexOfFirst, indexOfLast);
 
-  // Reset page if filter/search changes
   useEffect(() => {
     setCurrentPage(1);
   }, [search, filterRisk, students.length]);
 
-  /* ================= PIE + TREND DATA ================= */
   const pieData = {
     labels: ["High Risk", "Medium Risk", "Low Risk"],
     datasets: [
@@ -149,6 +146,10 @@ export default function Dashboard() {
     navigate("/login");
   };
 
+  const handleCreateSession = () => {
+    navigate("/create-session");
+  };
+
   return (
     <div className="dashboard">
       <nav className="navbar">
@@ -161,9 +162,17 @@ export default function Dashboard() {
       </nav>
 
       <div className="dashboard-container">
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="dashboard-header">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="dashboard-header"
+        >
           <h2>Teacher Analytics Dashboard</h2>
           <p>Monitor academic risks and take early actions.</p>
+
+          <button className="create-session-btn" onClick={handleCreateSession}>
+            Create Session
+          </button>
         </motion.div>
 
         <div className="stats-grid">
@@ -203,7 +212,11 @@ export default function Dashboard() {
         </div>
 
         <div className="filter-bar">
-          <input placeholder="Search student..." value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input
+            placeholder="Search student..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
           <select value={filterRisk} onChange={(e) => setFilterRisk(e.target.value)}>
             <option value="All">All</option>
             <option value="High">High</option>
@@ -223,17 +236,28 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {currentStudents.map((student) => (
-                <tr key={student._id}>
-                  <td>{student.name}</td>
-                  <td>{student.rollNo}</td>
-                  <td><span className={`badge ${student.riskLevel}`}>{student.riskLevel}</span></td>
+              {currentStudents.length > 0 ? (
+                currentStudents.map((student) => (
+                  <tr key={student._id}>
+                    <td>{student.studentName}</td>
+                    <td>{student.regNo}</td>
+                    <td>
+                      <span className={`badge ${student.riskLevel}`}>
+                        {student.riskLevel}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="3" style={{ textAlign: "center" }}>
+                    No students found
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
 
-          {/* PAGINATION */}
           {totalPages > 1 && (
             <div className="pagination">
               {Array.from({ length: totalPages }, (_, i) => (
@@ -252,9 +276,15 @@ export default function Dashboard() {
         <div className="card suggestion-box">
           <h3>AI Suggestion</h3>
           {stats.high > 5 ? (
-            <p>⚠️ More than 5 students are high risk. Immediate intervention sessions and attendance review are recommended.</p>
+            <p>
+              ⚠️ More than 5 students are high risk. Immediate intervention sessions
+              and attendance review are recommended.
+            </p>
           ) : stats.medium > 5 ? (
-            <p>⚡ Several students are at medium risk. Provide mentoring and monitor weekly performance.</p>
+            <p>
+              ⚡ Several students are at medium risk. Provide mentoring and monitor
+              weekly performance.
+            </p>
           ) : (
             <p>✅ Risk levels are stable. Continue monitoring weekly.</p>
           )}

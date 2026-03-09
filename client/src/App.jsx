@@ -5,10 +5,14 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Students from "./pages/Students.jsx";
+import CreateSession from "./pages/CreateSession";
+
 import { useContext } from "react";
 import { ThemeContext } from "./contexts/ThemeContext";
 import { useEffect } from "react";
 import "./darkmode.css";
+import StudentForm from "./pages/StudentForm";
+
 export default function App() {
   const { darkMode } = useContext(ThemeContext);
 
@@ -30,6 +34,14 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route
+  path="/create-session"
+  element={
+    <ProtectedRoute>
+      <CreateSession />
+    </ProtectedRoute>
+  }
+/>
+        <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
@@ -46,6 +58,7 @@ export default function App() {
           }
         />
         <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/student-form/:sessionCode" element={<StudentForm />} />
       </Routes>
     </BrowserRouter>
   );

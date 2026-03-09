@@ -10,7 +10,7 @@ connectDB();
 const app = express();
 
 app.use(cors({
-  origin: "https://iars-beta.vercel.app",
+  origin: ["http://localhost:5173", "https://iars-beta.vercel.app"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
@@ -21,7 +21,7 @@ app.use(express.json());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://iars-beta.vercel.app",
+    origin: ["http://localhost:5173", "https://iars-beta.vercel.app"],
     methods: ["GET", "POST"],
   },
   allowEIO3: true 
@@ -38,8 +38,10 @@ io.on("connection", (socket) => {
 });
 
 /* ================= ROUTES ================= */
+const sessionRoutes = require("./routes/sessionRoutes");
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/students", require("./routes/studentRoutes"));
+app.use("/api/sessions", sessionRoutes);
 
 app.get("/", (req, res) => {
   res.send("IARS API Running");
