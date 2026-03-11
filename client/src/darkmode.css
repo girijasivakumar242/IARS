@@ -296,3 +296,7 @@ body.dark .modal h3,
 body.dark .modal p{
   color: #020617;
 }
+body.dark .session-card h2
+{
+   color: #020617;
+}

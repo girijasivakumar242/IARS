@@ -5,6 +5,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Students from "./pages/Students.jsx";
+import StudentDetails from "./pages/StudentDetails.jsx";
 import CreateSession from "./pages/CreateSession";
 
 import { useContext } from "react";
@@ -54,6 +55,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Students />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/student-details/:id"
+          element={
+            <ProtectedRoute>
+              <StudentDetails />
             </ProtectedRoute>
           }
         />

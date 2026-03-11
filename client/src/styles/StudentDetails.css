@@ -1,0 +1,471 @@
+/* ================= STUDENT DETAILS PAGE ================= */
+
+.student-details-page {
+  padding: 40px 64px;
+  animation: fadeIn 0.4s ease;
+  font-family: "Inter", sans-serif;
+  background: var(--bg-page);
+  min-height: calc(100vh - 60px);
+  color: var(--text-primary);
+}
+
+.details-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* ================= HEADER ================= */
+
+.details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.back-btn,
+.download-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: #0891b2;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-controls);
+}
+
+.back-btn:hover,
+.download-btn:hover {
+  background: #0891b2;
+  color: white;
+  border-color: #0891b2;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(8, 145, 178, 0.15);
+}
+
+/* ================= LOADING & ERROR STATES ================= */
+
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 24px;
+  padding: 40px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: var(--shadow-table);
+}
+
+.loading-container p,
+.error-container h2 {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.spinner {
+  border: 4px solid var(--border-color);
+  border-top: 4px solid #0891b2;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ================= STUDENT INFO CARD ================= */
+
+.student-info-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-controls);
+  border: 1px solid var(--border-color);
+}
+
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.info-header h1 {
+  margin: 0;
+  font-size: 32px;
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
+.reg-no {
+  margin: 8px 0 0 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-item .label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.info-item .value {
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.risk-badge {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border-left: 3px solid;
+  font-weight: 600;
+  font-size: 14px;
+  width: fit-content;
+  display: inline-block;
+}
+
+/* ================= PERFORMANCE CARD ================= */
+
+.performance-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-controls);
+  border: 1px solid var(--border-color);
+}
+
+.performance-card h2 {
+  margin: 0 0 24px 0;
+  font-size: 20px;
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
+.performance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.performance-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: var(--bg-card-soft);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.performance-item:hover {
+  border-color: #0891b2;
+  box-shadow: 0 4px 12px rgba(8, 145, 178, 0.1);
+}
+
+.performance-item .label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.metric {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.large-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0891b2;
+}
+
+.unit {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #0891b2;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+/* ================= SUBJECTS CARD ================= */
+
+.subjects-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-controls);
+  border: 1px solid var(--border-color);
+}
+
+.subjects-card h2 {
+  margin: 0 0 24px 0;
+  font-size: 20px;
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
+.subjects-table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.subjects-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+}
+
+.subjects-table thead {
+  background: var(--bg-card-soft);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.subjects-table th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-table-head);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.subjects-table tbody tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.subjects-table tbody tr:hover {
+  background: var(--bg-row-hover);
+}
+
+.subjects-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.subjects-table td {
+  padding: 14px 16px;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.subject-name {
+  font-weight: 500;
+}
+
+.grade-badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border-left: 3px solid;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* ================= SUGGESTIONS CARD ================= */
+
+.suggestions-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: var(--shadow-controls);
+  border: 1px solid var(--border-color);
+}
+
+.suggestions-card h2 {
+  margin: 0 0 24px 0;
+  font-size: 20px;
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.suggestion-item {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-card-soft);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  align-items: flex-start;
+  transition: all 0.3s ease;
+}
+
+.suggestion-item:hover {
+  border-color: #0891b2;
+  box-shadow: 0 4px 12px rgba(8, 145, 178, 0.1);
+}
+
+.suggestion-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: #0891b2;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.suggestion-text {
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+/* ================= RESPONSIVE DESIGN ================= */
+
+@media (max-width: 768px) {
+  .student-details-page {
+    padding: 24px 16px;
+  }
+
+  .student-info-card,
+  .performance-card,
+  .subjects-card,
+  .suggestions-card {
+    padding: 20px;
+  }
+
+  .info-header h1 {
+    font-size: 24px;
+  }
+
+  .info-grid,
+  .performance-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .details-header {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .back-btn,
+  .download-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .subjects-table {
+    font-size: 12px;
+  }
+
+  .subjects-table th,
+  .subjects-table td {
+    padding: 12px 8px;
+  }
+
+  .large-value {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .student-details-page {
+    padding: 16px 12px;
+  }
+
+  .student-info-card,
+  .performance-card,
+  .subjects-card,
+  .suggestions-card {
+    padding: 16px;
+  }
+
+  .info-header h1 {
+    font-size: 20px;
+  }
+
+  .performance-card h2,
+  .subjects-card h2,
+  .suggestions-card h2 {
+    font-size: 18px;
+  }
+
+  .metric {
+    flex-wrap: wrap;
+  }
+
+  .large-value {
+    font-size: 22px;
+  }
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

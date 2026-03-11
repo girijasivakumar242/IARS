@@ -14,16 +14,21 @@ const CreateSession = () => {
 
   const [session, setSession] = useState(null);
   const [message, setMessage] = useState("");
+  const [statusType, setStatusType] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value
-    });
+    }));
   };
 
   const createSession = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage("");
+    setStatusType("");
 
     try {
       const token = localStorage.getItem("token");
@@ -40,15 +45,19 @@ const CreateSession = () => {
 
       setSession(res.data.session);
       setMessage("Session created successfully!");
+      setStatusType("success");
     } catch (err) {
       console.log(err);
-      setMessage("Failed to create session");
+      setMessage("Failed to create session. Please try again.");
+      setStatusType("error");
+    } finally {
+      setLoading(false);
     }
   };
 
   const downloadQR = () => {
     const canvas = qrRef.current?.querySelector("canvas");
-    if (!canvas) return;
+    if (!canvas || !session) return;
 
     const url = canvas.toDataURL("image/png");
     const link = document.createElement("a");
@@ -58,76 +67,167 @@ const CreateSession = () => {
   };
 
   const copyLink = async () => {
+    if (!session?.qrLink) return;
+
     try {
       await navigator.clipboard.writeText(session.qrLink);
       setMessage("Session link copied successfully!");
+      setStatusType("success");
     } catch (error) {
-      setMessage("Failed to copy link");
+      setMessage("Failed to copy link.");
+      setStatusType("error");
     }
   };
 
   return (
-    <div className="session-container">
-      <div className="session-card">
-        <h2>Create Student Data Session</h2>
+    <div className="session-page">
+      <div className="session-shell">
+        <div className="session-header">
+          <div>
+            <p className="session-badge">Attendance / Student Data Portal</p>
+            <h1>Create Student Data Session</h1>
+            <p className="session-subtitle">
+              Generate a secure session for students to submit their details
+              using QR code or direct link.
+            </p>
+          </div>
+        </div>
 
-        <form onSubmit={createSession}>
-          <input
-            type="text"
-            name="department"
-            placeholder="Department"
-            value={formData.department}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="text"
-            name="year"
-            placeholder="Year"
-            value={formData.year}
-            onChange={handleChange}
-            required
-          />
-
-          <input
-            type="number"
-            name="durationMinutes"
-            placeholder="Session Duration (minutes)"
-            value={formData.durationMinutes}
-            onChange={handleChange}
-          />
-
-          <button type="submit">
-            Create Session
-          </button>
-        </form>
-
-        {message && <p className="message">{message}</p>}
-
-        {session && (
-          <div className="qr-section">
-            <h3>Session Code: {session.sessionCode}</h3>
-
-            <div ref={qrRef} className="qr-wrapper">
-              <QRCodeCanvas value={session.qrLink} size={200} />
+        <div className="session-grid">
+          <div className="session-panel form-panel">
+            <div className="panel-top">
+              <h2>Session Details</h2>
+              <p>Fill in the academic details to create a new live session.</p>
             </div>
 
-            <p>Students scan this QR to submit details</p>
+            <form onSubmit={createSession} className="session-form">
+              <div className="input-group">
+                <label htmlFor="department">Department</label>
+                <input
+                  id="department"
+                  type="text"
+                  name="department"
+                  placeholder="e.g. CSE"
+                  value={formData.department}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <p className="session-link">{session.qrLink}</p>
+              <div className="input-group">
+                <label htmlFor="year">Year</label>
+                <input
+                  id="year"
+                  type="text"
+                  name="year"
+                  placeholder="e.g. 2nd Year"
+                  value={formData.year}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-            <div className="qr-actions">
-              <button type="button" className="secondary-btn" onClick={downloadQR}>
-                Download QR
+              <div className="input-group">
+                <label htmlFor="durationMinutes">Session Duration</label>
+                <input
+                  id="durationMinutes"
+                  type="number"
+                  name="durationMinutes"
+                  placeholder="Session Duration (minutes)"
+                  value={formData.durationMinutes}
+                  onChange={handleChange}
+                  min="1"
+                />
+              </div>
+
+              <button type="submit" className="primary-btn" disabled={loading}>
+                {loading ? "Creating Session..." : "Create Session"}
               </button>
+            </form>
 
-              <button type="button" className="secondary-btn" onClick={copyLink}>
-                Copy Link
-              </button>
+            {message && (
+              <div className={`status-message ${statusType}`}>
+                {message}
+              </div>
+            )}
+
+            <div className="mini-info-grid">
+              <div className="info-card">
+                <span>Department</span>
+                <strong>{formData.department || "Not selected"}</strong>
+              </div>
+              <div className="info-card">
+                <span>Year</span>
+                <strong>{formData.year || "Not selected"}</strong>
+              </div>
+              <div className="info-card">
+                <span>Duration</span>
+                <strong>{formData.durationMinutes} mins</strong>
+              </div>
             </div>
           </div>
-        )}
+
+          <div className="session-panel preview-panel">
+            <div className="panel-top">
+              <h2>Live Preview</h2>
+              <p>
+                QR code and session link will appear here once the session is
+                created.
+              </p>
+            </div>
+
+            {session ? (
+              <div className="qr-section">
+                <div className="session-code-box">
+                  <span>Session Code</span>
+                  <h3>{session.sessionCode}</h3>
+                </div>
+
+                <div ref={qrRef} className="qr-wrapper">
+                  <QRCodeCanvas value={session.qrLink} size={220} />
+                </div>
+
+                <p className="qr-note">
+                  Students can scan this QR code to submit their details.
+                </p>
+
+                <div className="link-box">
+                  <span>Session Link</span>
+                  <p>{session.qrLink}</p>
+                </div>
+
+                <div className="qr-actions">
+                  <button
+                    type="button"
+                    className="secondary-btn"
+                    onClick={downloadQR}
+                  >
+                    Download QR
+                  </button>
+
+                  <button
+                    type="button"
+                    className="secondary-btn"
+                    onClick={copyLink}
+                  >
+                    Copy Link
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="empty-preview">
+                <div className="empty-qr-box">
+                  <div className="fake-qr" />
+                </div>
+                <h3>No Session Created Yet</h3>
+                <p>
+                  Once you create a session, the QR code, session code, and
+                  sharing link will be displayed here.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
