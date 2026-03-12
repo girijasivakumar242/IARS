@@ -42,6 +42,7 @@ const sessionRoutes = require("./routes/sessionRoutes");
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/students", require("./routes/studentRoutes"));
 app.use("/api/sessions", sessionRoutes);
+app.use("/api/parent", require("./routes/parentRoutes"));
 
 app.get("/", (req, res) => {
   res.send("IARS API Running");

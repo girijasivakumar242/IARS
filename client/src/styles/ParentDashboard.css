@@ -1,0 +1,476 @@
+/* ================= PARENT DASHBOARD PAGE ================= */
+
+.parent-dashboard-page {
+  padding: 40px 64px;
+  animation: fadeIn 0.4s ease;
+  font-family: "Inter", sans-serif;
+  background: var(--bg-page);
+  min-height: calc(100vh - 60px);
+  color: var(--text-primary);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.page-header h2 {
+  font-size: 30px;
+  margin-bottom: 6px;
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 14px;
+}
+
+.link-child-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #0891b2;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(8, 145, 178, 0.2);
+}
+
+.link-child-btn:hover {
+  background: #0e7490;
+  box-shadow: 0 6px 16px rgba(8, 145, 178, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ================= ALERT ================= */
+
+.alert {
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alert-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+body.dark .alert-error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.alert button {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* ================= LOADING & EMPTY STATES ================= */
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  padding: 40px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: var(--shadow-table);
+}
+
+.spinner {
+  border: 4px solid var(--border-color);
+  border-top: 4px solid #0891b2;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  padding: 40px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: var(--shadow-table);
+  text-align: center;
+}
+
+.empty-state h3 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--text-heading);
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  max-width: 400px;
+}
+
+/* ================= CHILDREN GRID ================= */
+
+.children-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.child-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-controls);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: all 0.3s ease;
+}
+
+.child-card:hover {
+  box-shadow: var(--shadow-table);
+  border-color: #0891b2;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
+.reg-no {
+  margin: 6px 0 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.delete-btn {
+  background: #fee2e2;
+  color: #991b1b;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: #fecaca;
+}
+
+body.dark .delete-btn {
+  background: rgba(239, 68, 68, 0.1);
+  color: #fca5a5;
+}
+
+body.dark .delete-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* ================= METRICS ================= */
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: var(--bg-card-soft);
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.metric .label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-weight: 600;
+}
+
+.metric .value {
+  font-size: 16px;
+  color: #0891b2;
+  font-weight: 700;
+}
+
+/* ================= RISK BADGE ================= */
+
+.risk-badge-container {
+  display: flex;
+  justify-content: center;
+}
+
+.risk-badge {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border-left: 3px solid;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.no-records {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: var(--bg-card-soft);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.no-records p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* ================= VIEW DETAILS BUTTON ================= */
+
+.view-details-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #0891b2;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.view-details-btn:hover {
+  background: #0e7490;
+  transform: translateY(-2px);
+}
+
+/* ================= MODAL ================= */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal h2 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  color: var(--text-heading);
+  font-weight: 700;
+}
+
+.modal p {
+  margin: 0 0 24px 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--input-border);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.modal input:focus {
+  border-color: #0891b2;
+  box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.12);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.modal-actions button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background: var(--bg-card-soft);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.cancel-btn:hover {
+  background: var(--border-color);
+}
+
+.submit-btn {
+  background: #0891b2;
+  color: white;
+}
+
+.submit-btn:hover {
+  background: #0e7490;
+}
+
+/* ================= RESPONSIVE DESIGN ================= */
+
+@media (max-width: 768px) {
+  .parent-dashboard-page {
+    padding: 24px 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+  }
+
+  .children-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .link-child-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .parent-dashboard-page {
+    padding: 16px 12px;
+  }
+
+  .page-header h2 {
+    font-size: 24px;
+  }
+
+  .modal {
+    padding: 20px;
+  }
+
+  .metric .label {
+    font-size: 10px;
+  }
+
+  .metric .value {
+    font-size: 14px;
+  }
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -7,6 +7,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Students from "./pages/Students.jsx";
 import StudentDetails from "./pages/StudentDetails.jsx";
 import CreateSession from "./pages/CreateSession";
+import ParentDashboard from "./pages/ParentDashboard.jsx";
+import ParentChildView from "./pages/ParentChildView.jsx";
 
 import { useContext } from "react";
 import { ThemeContext } from "./contexts/ThemeContext";
@@ -63,6 +65,22 @@ export default function App() {
           element={
             <ProtectedRoute>
               <StudentDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/parent-dashboard"
+          element={
+            <ProtectedRoute>
+              <ParentDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/parent-child/:studentRegNo"
+          element={
+            <ProtectedRoute>
+              <ParentChildView />
             </ProtectedRoute>
           }
         />

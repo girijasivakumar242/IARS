@@ -27,7 +27,11 @@ export default function Login() {
       }
 
       localStorage.setItem("token", data.token);
-      navigate("/dashboard");
+      localStorage.setItem("userRole", data.user.role);
+      
+      // Navigate based on user role
+      const redirectPath = data.user.role === "parent" ? "/parent-dashboard" : "/dashboard";
+      navigate(redirectPath);
     } catch (err) {
       setError("Server error");
     }
@@ -46,7 +50,7 @@ export default function Login() {
 
       <div className="auth-right">
         <form className="auth-card" onSubmit={handleLogin}>
-          <h3>Teacher Login</h3>
+          <h3>Login</h3>
 
           {error && <p className="error-text">{error}</p>}
 
