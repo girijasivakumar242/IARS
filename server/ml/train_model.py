@@ -39,30 +39,56 @@ X_scaled = scaler.fit_transform(X_clustering)
 kmeans = KMeans(n_clusters=3, random_state=42, n_init=10)
 clusters = kmeans.fit_predict(X_scaled)
 
-# Map clusters to risk levels based on cluster centers
-# Lower cluster numbers will be assigned to higher risk based on feature values
-cluster_centers = kmeans.cluster_centers_
+# Map clusters to risk levels based on ORIGINAL SCALE cluster centers
+cluster_centers_scaled = kmeans.cluster_centers_
+cluster_centers_original = scaler.inverse_transform(cluster_centers_scaled)
+
 cluster_risk_mapping = {}
 
-# Calculate average feature values for each cluster to determine risk level
-for i in range(3):
-    cluster_mask = clusters == i
-    avg_attendance = data.loc[cluster_mask, "attendance"].mean()
-    avg_internal = data.loc[cluster_mask, "internalMarks"].mean()
-    avg_cgpa = data.loc[cluster_mask, "cgpa"].mean()
-    risk_score = (100 - avg_attendance) + (100 - avg_internal) + (10 - avg_cgpa)  # Higher score = higher risk
+# You can tune these weights if needed
+attendance_weight = 0.4
+internal_weight = 0.3
+cgpa_weight = 0.3
+
+for i, center in enumerate(cluster_centers_original):
+    avg_attendance, avg_internal, avg_cgpa = center
+
+    # Normalize all to 0–1 risk contribution
+    attendance_risk = (100 - avg_attendance) / 100
+    internal_risk = (100 - avg_internal) / 100
+    cgpa_risk = (10 - avg_cgpa) / 10
+
+    # Weighted combined risk score
+    risk_score = (
+        attendance_weight * attendance_risk +
+        internal_weight * internal_risk +
+        cgpa_weight * cgpa_risk
+    )
+
     cluster_risk_mapping[i] = risk_score
 
 # Sort clusters by risk score and assign labels
 sorted_clusters = sorted(cluster_risk_mapping.items(), key=lambda x: x[1], reverse=True)
 risk_labels = ["High", "Medium", "Low"]
-cluster_to_risk = {cluster_id: risk_labels[i] for i, (cluster_id, _) in enumerate(sorted_clusters)}
+cluster_to_risk = {
+    cluster_id: risk_labels[i]
+    for i, (cluster_id, _) in enumerate(sorted_clusters)
+}
 
 data["riskLevel"] = [cluster_to_risk[cluster] for cluster in clusters]
 
 print("Cluster distribution:")
 print(data["riskLevel"].value_counts())
 print(f"Silhouette Score: {silhouette_score(X_scaled, clusters):.3f}")
+
+print("\nCluster centers (original scale):")
+for i, center in enumerate(cluster_centers_original):
+    print(
+        f"Cluster {i}: attendance={center[0]:.2f}, "
+        f"internalMarks={center[1]:.2f}, cgpa={center[2]:.2f}, "
+        f"mappedRisk={cluster_to_risk[i]}, "
+        f"riskScore={cluster_risk_mapping[i]:.3f}"
+    )
 
 # 4. Select features and target
 X = data[features_for_clustering]
@@ -71,6 +97,8 @@ y = data["riskLevel"]
 # 5. Encode target labels
 le = LabelEncoder()
 y_encoded = le.fit_transform(y)
+
+print("\nEncoded classes:", list(le.classes_))
 
 # 6. Train-test split
 X_train, X_test, y_train, y_test = train_test_split(
