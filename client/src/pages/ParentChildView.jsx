@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaDownload } from "react-icons/fa";
+import jsPDF from "jspdf";
 import "../styles/ParentChildView.css";
 
 export default function ParentChildView() {
@@ -52,50 +53,119 @@ export default function ParentChildView() {
   const downloadReport = () => {
     if (!selectedRecord) return;
 
-    const reportContent = `
-STUDENT PERFORMANCE REPORT
-===============================================
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 15;
+    let yPosition = margin;
+    const lineHeight = 7;
+    const maxWidth = pageWidth - 2 * margin;
 
-Student Information:
-Name: ${selectedRecord.studentName}
-Registration No: ${selectedRecord.regNo}
-Department: ${selectedRecord.department}
-Year: ${selectedRecord.year}
+    // Title
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0);
+    doc.text("STUDENT PERFORMANCE REPORT", margin, yPosition);
+    yPosition += 12;
 
-Academic Performance:
-CGPA: ${selectedRecord.cgpa.toFixed(2)}/10
-Attendance: ${selectedRecord.attendance.toFixed(1)}%
-Internal Marks: ${selectedRecord.internalMarks.toFixed(1)}/100
-Risk Level: ${selectedRecord.riskLevel}
+    // Separator line
+    doc.setDrawColor(0, 0, 0);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 8;
 
-Subject-Wise Grades:
-${
-  selectedRecord.subjectGrades && selectedRecord.subjectGrades.length > 0
-    ? selectedRecord.subjectGrades
-        .map((sg) => `${sg.subjectName}: ${sg.grade || "N/A"}`)
-        .join("\n")
-    : "No subject grades available"
-}
+    // Student Information Section
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Student Information:", margin, yPosition);
+    yPosition += 6;
 
-${
-  selectedRecord.suggestions && selectedRecord.suggestions.length > 0
-    ? `
-Recommendations:
-${selectedRecord.suggestions.map((s) => `- ${s}`).join("\n")}
-`
-    : ""
-}
+    doc.setFontSize(10);
+    const studentInfo = [
+      `Name: ${selectedRecord.studentName}`,
+      `Registration No: ${selectedRecord.regNo}`,
+      `Department: ${selectedRecord.department}`,
+      `Year: ${selectedRecord.year}`
+    ];
 
-Generated on: ${new Date().toLocaleString()}
-    `;
+    studentInfo.forEach(info => {
+      doc.text(info, margin + 5, yPosition);
+      yPosition += lineHeight;
+    });
 
-    const element = document.createElement("a");
-    const file = new Blob([reportContent], { type: "text/plain" });
-    element.href = URL.createObjectURL(file);
-    element.download = `${selectedRecord.studentName}_report.txt`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    yPosition += 4;
+
+    // Academic Performance Section
+    doc.setFontSize(11);
+    doc.text("Academic Performance:", margin, yPosition);
+    yPosition += 6;
+
+    doc.setFontSize(10);
+    const academicInfo = [
+      `CGPA: ${selectedRecord.cgpa.toFixed(2)}/10`,
+      `Attendance: ${selectedRecord.attendance.toFixed(1)}%`,
+      `Internal Marks: ${selectedRecord.internalMarks.toFixed(1)}/100`,
+      `Risk Level: ${selectedRecord.riskLevel}`
+    ];
+
+    academicInfo.forEach(info => {
+      doc.text(info, margin + 5, yPosition);
+      yPosition += lineHeight;
+    });
+
+    yPosition += 4;
+
+    // Subject-wise Grades Section
+    doc.setFontSize(11);
+    doc.text("Subject-wise Grades:", margin, yPosition);
+    yPosition += 6;
+
+    doc.setFontSize(10);
+    if (selectedRecord.subjectGrades && selectedRecord.subjectGrades.length > 0) {
+      selectedRecord.subjectGrades.forEach(sg => {
+        const gradeText = `${sg.subjectName}: ${sg.grade || "N/A"}`;
+        doc.text(gradeText, margin + 5, yPosition);
+        yPosition += lineHeight;
+      });
+    } else {
+      doc.text("No subject grades available", margin + 5, yPosition);
+      yPosition += lineHeight;
+    }
+
+    yPosition += 4;
+
+    // Recommendations Section
+    if (selectedRecord.suggestions && selectedRecord.suggestions.length > 0) {
+      doc.setFontSize(11);
+      doc.text("Recommendations:", margin, yPosition);
+      yPosition += 6;
+
+      doc.setFontSize(10);
+      selectedRecord.suggestions.forEach(suggestion => {
+        const lines = doc.splitTextToSize(`• ${suggestion}`, maxWidth - 10);
+        lines.forEach(line => {
+          if (yPosition > pageHeight - margin) {
+            doc.addPage();
+            yPosition = margin;
+          }
+          doc.text(line, margin + 5, yPosition);
+          yPosition += lineHeight;
+        });
+      });
+
+      yPosition += 4;
+    }
+
+    // Footer with timestamp
+    if (yPosition > pageHeight - margin - 10) {
+      doc.addPage();
+      yPosition = margin;
+    }
+
+    doc.setFontSize(9);
+    doc.setTextColor(128, 128, 128);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, margin, pageHeight - margin);
+
+    // Download PDF
+    doc.save(`${selectedRecord.studentName}_report.pdf`);
   };
 
   const getRiskColor = (riskLevel) => {

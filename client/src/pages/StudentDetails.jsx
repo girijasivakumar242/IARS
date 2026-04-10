@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaDownload } from "react-icons/fa";
+import jsPDF from "jspdf";
 import "../styles/StudentDetails.css";
 
 export default function StudentDetails() {
@@ -70,50 +71,119 @@ export default function StudentDetails() {
   const downloadReport = () => {
     if (!student) return;
 
-    const reportContent = `
-STUDENT SUBJECT-WISE RECORD
-===============================================
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 15;
+    let yPosition = margin;
+    const lineHeight = 7;
+    const maxWidth = pageWidth - 2 * margin;
 
-Student Information:
-Name: ${student.studentName}
-Registration No: ${student.regNo}
-Department: ${student.department}
-Year: ${student.year}
+    // Title
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0);
+    doc.text("STUDENT SUBJECT-WISE RECORD", margin, yPosition);
+    yPosition += 12;
 
-Academic Performance:
-CGPA: ${student.cgpa.toFixed(2)}/10
-Attendance: ${student.attendance.toFixed(1)}%
-Internal Marks: ${student.internalMarks.toFixed(1)}/100
-Risk Level: ${student.riskLevel}
+    // Separator line
+    doc.setDrawColor(0, 0, 0);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 8;
 
-Subject-Wise Grades:
-${
-  student.subjectGrades && student.subjectGrades.length > 0
-    ? student.subjectGrades
-        .map((sg) => `${sg.subjectName}: ${sg.grade || "N/A"}`)
-        .join("\n")
-    : "No subject grades available"
-}
+    // Student Information Section
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Student Information:", margin, yPosition);
+    yPosition += 6;
 
-${
-  student.suggestions && student.suggestions.length > 0
-    ? `
-Suggestions:
-${student.suggestions.map((s) => `- ${s}`).join("\n")}
-`
-    : ""
-}
+    doc.setFontSize(10);
+    const studentInfo = [
+      `Name: ${student.studentName}`,
+      `Registration No: ${student.regNo}`,
+      `Department: ${student.department}`,
+      `Year: ${student.year}`
+    ];
 
-Generated on: ${new Date().toLocaleString()}
-    `;
+    studentInfo.forEach(info => {
+      doc.text(info, margin + 5, yPosition);
+      yPosition += lineHeight;
+    });
 
-    const element = document.createElement("a");
-    const file = new Blob([reportContent], { type: "text/plain" });
-    element.href = URL.createObjectURL(file);
-    element.download = `${student.studentName}_record.txt`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    yPosition += 4;
+
+    // Academic Performance Section
+    doc.setFontSize(11);
+    doc.text("Academic Performance:", margin, yPosition);
+    yPosition += 6;
+
+    doc.setFontSize(10);
+    const academicInfo = [
+      `CGPA: ${student.cgpa.toFixed(2)}/10`,
+      `Attendance: ${student.attendance.toFixed(1)}%`,
+      `Internal Marks: ${student.internalMarks.toFixed(1)}/100`,
+      `Risk Level: ${student.riskLevel}`
+    ];
+
+    academicInfo.forEach(info => {
+      doc.text(info, margin + 5, yPosition);
+      yPosition += lineHeight;
+    });
+
+    yPosition += 4;
+
+    // Subject-wise Grades Section
+    doc.setFontSize(11);
+    doc.text("Subject-wise Grades:", margin, yPosition);
+    yPosition += 6;
+
+    doc.setFontSize(10);
+    if (student.subjectGrades && student.subjectGrades.length > 0) {
+      student.subjectGrades.forEach(sg => {
+        const gradeText = `${sg.subjectName}: ${sg.grade || "N/A"}`;
+        doc.text(gradeText, margin + 5, yPosition);
+        yPosition += lineHeight;
+      });
+    } else {
+      doc.text("No subject grades available", margin + 5, yPosition);
+      yPosition += lineHeight;
+    }
+
+    yPosition += 4;
+
+    // Suggestions Section
+    if (student.suggestions && student.suggestions.length > 0) {
+      doc.setFontSize(11);
+      doc.text("Suggestions:", margin, yPosition);
+      yPosition += 6;
+
+      doc.setFontSize(10);
+      student.suggestions.forEach(suggestion => {
+        const lines = doc.splitTextToSize(`• ${suggestion}`, maxWidth - 10);
+        lines.forEach(line => {
+          if (yPosition > pageHeight - margin) {
+            doc.addPage();
+            yPosition = margin;
+          }
+          doc.text(line, margin + 5, yPosition);
+          yPosition += lineHeight;
+        });
+      });
+
+      yPosition += 4;
+    }
+
+    // Footer with timestamp
+    if (yPosition > pageHeight - margin - 10) {
+      doc.addPage();
+      yPosition = margin;
+    }
+
+    doc.setFontSize(9);
+    doc.setTextColor(128, 128, 128);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, margin, pageHeight - margin);
+
+    // Download PDF
+    doc.save(`${student.studentName}_record.pdf`);
   };
 
   if (loading) {
